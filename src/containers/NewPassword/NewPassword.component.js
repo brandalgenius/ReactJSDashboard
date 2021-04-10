@@ -1,0 +1,71 @@
+import React from 'react'
+import { Form, Input, Button } from 'antd'
+import { Link } from 'react-router-dom'
+import { WrapperNewPassword } from './NewPassword.style'
+
+const NewPasswordComponent = props => {
+  const { form, onSubmit } = props
+
+  const compareToFirstPassword = (rule, value, callback) => {
+    if (value && value !== form.getFieldValue('password')) {
+      callback('入力したパスワードに矛盾があります！')
+    } else {
+      callback()
+    }
+  }
+
+  const validatorPassword = (rule, value, callback) => {
+    const lengthPassword = form.getFieldValue('password').length
+    if (lengthPassword < 8 || lengthPassword > 15) {
+      callback('パスワードは半角英数8文字以上15文字以下で記入して下さい。')
+    } else {
+      callback()
+    }
+  }
+
+  const _form = () => (
+    <>
+      <div className="text-dark font-size-24 mb-4 text-center">
+        <strong>新しいパスワードを作成する</strong>
+      </div>
+      <div className={`card`}>
+        <Form layout="vertical" onSubmit={onSubmit} className="mb-4">
+          <Form.Item>
+            {form.getFieldDecorator('password', {
+              rules: [
+                { required: true, message: '新しいパスワードを入力してください' },
+                {
+                  validator: validatorPassword,
+                },
+              ],
+            })(<Input.Password size="large" placeholder="新しいパスワード" />)}
+          </Form.Item>
+          <Form.Item>
+            {form.getFieldDecorator('confirmPassword', {
+              rules: [
+                {
+                  required: true,
+                  message: 'パスワードを確認してください！',
+                },
+                {
+                  validator: compareToFirstPassword,
+                },
+              ],
+            })(<Input.Password size="large" placeholder="新しいパスワードの確認" />)}
+          </Form.Item>
+          <Button type="primary" htmlType="submit" size="large" className="text-center w-100">
+            <strong>新しいパスワードを作成</strong>
+          </Button>
+        </Form>
+        <Link to="/auth/login" className="kit__utils__link font-size-16">
+          <i className="fe fe-arrow-left mr-1 align-middle" />
+          ログインに移動
+        </Link>
+      </div>
+    </>
+  )
+
+  return <WrapperNewPassword>{_form()}</WrapperNewPassword>
+}
+
+export default NewPasswordComponent
